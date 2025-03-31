@@ -1,7 +1,8 @@
-The [UNIX command](<http://en.wikipedia.org/wiki/Rm_(Unix)>) `rm -rf` for node
-in a cross-platform implementation.
+* 💡== `rm -rf` [UNIX command](<http://en.wikipedia.org/wiki/Rm_(Unix)>)  | node 💡/
+  * cross-platform implementation
 
-Install with `npm install rimraf`.
+## How to install?
+* `npm install rimraf`
 
 ## Major Changes
 
@@ -32,82 +33,84 @@ Install with `npm install rimraf`.
 
 ## API
 
-Hybrid module, load either with `import` or `require()`.
+* ways to load
+  * -- via -- `import`
+  * -- via -- `require()`
 
-```js
-// 'rimraf' export is the one you probably want, but other
-// strategies exported as well.
-import { rimraf, rimrafSync, native, nativeSync } from 'rimraf'
-// or
-const { rimraf, rimrafSync, native, nativeSync } = require('rimraf')
-```
-
-All removal functions return a boolean indicating that all
-entries were successfully removed.
-
-The only case in which this will not return `true` is if
-something was omitted from the removal via a `filter` option.
+* EXIST SEVERAL removal strategies
+  ```js
+  // -- via -- `import`
+  import { rimraf, rimrafSync, native, nativeSync } from 'rimraf'
+  // -- via -- `require`
+  const { rimraf, rimrafSync, native, nativeSync } = require('rimraf')
+  ```
+  * return a boolean /
+    * `true` == ALL entries -- were removed SUCCESSFULLY
+      * EXCEPT TO, SOMETHING was omitted -- via -- `filter` option
 
 ### `rimraf(f, [opts]) -> Promise`
 
-This first parameter is a path or array of paths. The second
-argument is an options object.
-
-Options:
-
-- `preserveRoot`: If set to boolean `false`, then allow the
-  recursive removal of the root directory. Otherwise, this is
-  not allowed.
-- `tmp`: Windows only. Temp folder to place files and
-  folders for the "move then remove" fallback. Must be on the
-  same physical device as the path being deleted. Defaults to
-  `os.tmpdir()` when that is on the same drive letter as the path
-  being deleted, or `${drive}:\temp` if present, or `${drive}:\`
-  if not.
-- `maxRetries`: Windows and Native only. Maximum number of
-  retry attempts in case of `EBUSY`, `EMFILE`, and `ENFILE`
-  errors. Default `10` for Windows implementation, `0` for Native
-  implementation.
-- `backoff`: Windows only. Rate of exponential backoff for async
-  removal in case of `EBUSY`, `EMFILE`, and `ENFILE` errors.
-  Should be a number greater than 1. Default `1.2`
-- `maxBackoff`: Windows only. Maximum total backoff time in ms to
-  attempt asynchronous retries in case of `EBUSY`, `EMFILE`, and
-  `ENFILE` errors. Default `200`. With the default `1.2` backoff
-  rate, this results in 14 retries, with the final retry being
-  delayed 33ms.
-- `retryDelay`: Native only. Time to wait between retries, using
-  linear backoff. Default `100`.
-- `signal` Pass in an AbortSignal to cancel the directory
-  removal. This is useful when removing large folder structures,
-  if you'd like to limit the time spent.
-
-  Using a `signal` option prevents the use of Node's built-in
-  `fs.rm` because that implementation does not support abort
-  signals.
-
-- `glob` Boolean flag to treat path as glob pattern, or an object
-  specifying [`glob` options](https://github.com/isaacs/node-glob).
-- `filter` Method that returns a boolean indicating whether that
-  path should be deleted. With async `rimraf` methods, this may
-  return a Promise that resolves to a boolean. (Since Promises
-  are truthy, returning a Promise from a sync filter is the same
-  as just not filtering anything.)
-
-  The first argument to the filter is the path string. The
-  second argument is either a `Dirent` or `Stats` object for that
-  path. (The first path explored will be a `Stats`, the rest
-  will be `Dirent`.)
-
-  If a filter method is provided, it will _only_ remove entries
-  if the filter returns (or resolves to) a truthy value. Omitting
-  a directory will still allow its children to be removed, unless
-  they are also filtered out, but any parents of a filtered entry
-  will not be removed, since the directory will not be empty in
-  that case.
-
-  Using a filter method prevents the use of Node's built-in
-  `fs.rm` because that implementation does not support filtering.
+* `f`
+  * == path or paths[]
+* `[opts]`
+  * == options object / 
+    * ALLOWED keys
+      * `preserveRoot`
+        * if `false` -> enable recursive removal | root directory
+        * by default, `true`
+      * `tmp`
+        * TODO: Windows only. Temp folder to place files and
+          folders for the "move then remove" fallback. Must be on the
+          same physical device as the path being deleted. Defaults to
+          `os.tmpdir()` when that is on the same drive letter as the path
+          being deleted, or `${drive}:\temp` if present, or `${drive}:\`
+          if not.
+      * `maxRetries`
+        * Windows and Native only. Maximum number of
+          retry attempts in case of `EBUSY`, `EMFILE`, and `ENFILE`
+          errors. Default `10` for Windows implementation, `0` for Native
+          implementation.
+      * `backoff`
+        * Windows only. Rate of exponential backoff for async
+          removal in case of `EBUSY`, `EMFILE`, and `ENFILE` errors.
+          Should be a number greater than 1. Default `1.2`
+      * `maxBackoff`
+        * Windows only. Maximum total backoff time in ms to
+          attempt asynchronous retries in case of `EBUSY`, `EMFILE`, and
+          `ENFILE` errors. Default `200`. With the default `1.2` backoff
+          rate, this results in 14 retries, with the final retry being
+          delayed 33ms.
+      * `retryDelay`
+        * Native only. Time to wait between retries, using
+          linear backoff. Default `100`.
+      * `signal`
+        * Pass in an AbortSignal to cancel the directory
+          removal. This is useful when removing large folder structures,
+          if you'd like to limit the time spent.
+        * Using a `signal` option prevents the use of Node's built-in
+          `fs.rm` because that implementation does not support abort
+          signals.
+      * `glob`
+        * Boolean flag to treat path as glob pattern, or an object
+          specifying [`glob` options](https://github.com/isaacs/node-glob).
+      * `filter`
+        * Method that returns a boolean indicating whether that
+          path should be deleted. With async `rimraf` methods, this may
+          return a Promise that resolves to a boolean. (Since Promises
+          are truthy, returning a Promise from a sync filter is the same
+          as just not filtering anything.)
+        * The first argument to the filter is the path string. The
+          second argument is either a `Dirent` or `Stats` object for that
+          path. (The first path explored will be a `Stats`, the rest
+          will be `Dirent`.)
+        * If a filter method is provided, it will _only_ remove entries
+          if the filter returns (or resolves to) a truthy value. Omitting
+          a directory will still allow its children to be removed, unless
+          they are also filtered out, but any parents of a filtered entry
+          will not be removed, since the directory will not be empty in
+          that case.
+        * Using a filter method prevents the use of Node's built-in
+          `fs.rm` because that implementation does not support filtering.
 
 Any other options are provided to the native Node.js `fs.rm` implementation
 when that is used.
@@ -220,7 +223,9 @@ Implementation-specific options:
   --backoff=<n>       Exponential backoff factor for retries (default: 1.2)
 ```
 
-## mkdirp
+* `rimraf <path> [<path> ...]`
 
-If you need to _create_ a directory recursively, check out
-[mkdirp](https://github.com/isaacs/node-mkdirp).
+## [mkdirp](https://github.com/isaacs/node-mkdirp)
+
+* allows
+  * creating REURSIVELY a directory
